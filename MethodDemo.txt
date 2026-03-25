@@ -2,6 +2,13 @@ public void m1(String str1,String str2){
 System.out.println("m1 method Called By USer")
 }
 
+
 public void m2(String str1,String str2,String str3){
 System.out.println("m2 method Called By USer")
 }
+
+public void m3(String str1){
+System.out.println("m3 method")
+}
+ 
+
