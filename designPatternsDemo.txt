@@ -1,0 +1,1633 @@
+================== CREATIONAL ==================
+Singleton
+- One instance, global access
+- Example: Spring Beans
+- s1 = Singleton.getInstance(); s2 = Singleton.getInstance();  // s1 == s2
+
+Factory
+- Creates objects without exposing instantiation
+- Example: PaymentFactory.getPayment("CARD")
+- Centralized object creation
+
+Builder
+- Step-by-step construction, for many params
+- Example: UserBuilder -> build()
+- Fluent API, optional + required params
+
+Prototype
+- Clone existing objects instead of new
+- Example: Employee emp2 = emp1.clone();
+- Avoid expensive creation, object sharing
+
+
+
+================== STRUCTURAL ==================
+Adapter
+- Converts incompatible interfaces
+- Example: NotificationService -> EmailAdapter/SmsAdapter
+- Flow: Client -> Target Interface -> Adapter -> Service
+
+Decorator
+- Adds behavior dynamically without modifying class
+- Example: Coffee + Milk + Sugar
+- Avoids class explosion
+
+Facade
+- Simplified interface to complex subsystem
+- Example: OrderFacade -> Restaurant + Payment + Delivery + Notification
+- Client calls facade only
+
+Proxy
+- Controls access to real object
+- Example: DocumentProxy checks role before loading document
+- Adds security, caching, logging, lazy loading
+
+Bridge
+- Decouples abstraction from implementation
+- Example: Notification(Abstraction) + MessageSender(Impl)
+- Avoid subclass explosion
+
+Composite
+- Treat single + group objects uniformly
+- Example: Employee + Department tree
+- Recursive tree structure
+
+Flyweight
+- Shares common objects to reduce memory
+- Example: Employees share Department objects
+- Intrinsic (shared) vs Extrinsic (unique) state
+
+
+================== BEHAVIORAL ==================
+Strategy
+- Encapsulates algorithm, switch at runtime
+- Example: PaymentService.setStrategy(new CardPayment())
+- Runtime behavior change
+
+Observer
+- One-to-many, auto notify
+- Example: NotificationService -> EmailService/SmsService
+- Publish-subscribe pattern
+
+Chain of Responsibility
+- Request passes through chain until handled
+- Example: Manager -> Director -> CEO approval
+- Sequential handlers
+
+State
+- Object behavior changes with internal state
+- Example: Order status: New -> Shipped -> Delivered
+- State objects encapsulate behavior
+
+Mediator
+- Centralizes communication, reduces coupling
+- Example: ChatRoom mediates ChatUsers
+- vs Observer: Mediator = many-to-many, Observer = one-to-many
+
+Command
+- Request as object with execute()
+- Example: Remote control, Undo/Redo
+- Encapsulate request → queue/undo
+
+
+1️. Creational Design Patterns
+
+
+| Pattern       | Purpose / Definition                                        | Real-life / Code Example               | Key Points / When to Use                     |
+| ------------- | ----------------------------------------------------------- | -------------------------------------- | -------------------------------------------- |
+| **Singleton** | Ensure a class has only one instance, provide global access | Spring Beans, Logger                   | Thread-safe, lazy vs eager initialization    |
+| **Factory**   | Create objects without exposing instantiation logic         | PaymentFactory (UPI, Card, NetBanking) | Centralizes creation, loose coupling         |
+| **Builder**   | Step-by-step construction of complex objects                | UserBuilder with optional params       | Fluent API, good for many parameters         |
+| **Prototype** | Clone existing objects instead of creating new              | Employee.clone()                       | Expensive creation, avoid subclass explosion |
+
+
+2️. Structural Design Patterns
+
+| Pattern       | Purpose / Definition                             | Real-life / Code Example                        | Key Points / When to Use                                        |
+| ------------- | ------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------- |
+| **Adapter**   | Converts incompatible interfaces                 | EmailAdapter, SMSAdapter                        | Integrate existing classes, client expects a specific interface |
+| **Decorator** | Add behavior dynamically without modifying class | Coffee + Milk + Sugar                           | Avoid class explosion, runtime extension                        |
+| **Facade**    | Simplify interface to complex subsystem          | OrderFacade (Restaurant + Payment + Delivery)   | Client uses one simplified interface                            |
+| **Proxy**     | Controls access to real object                   | DocumentProxy (role-based access)               | Add security, lazy loading, caching, logging                    |
+| **Bridge**    | Decouple abstraction from implementation         | Notification(Abstraction) + MessageSender(Impl) | Avoid subclass explosion, flexibility                           |
+| **Composite** | Treat individual and group objects uniformly     | Employee + Department tree                      | Recursive tree structures, hierarchy                            |
+| **Flyweight** | Share common objects to save memory              | Employees share Department objects              | Intrinsic (shared) vs Extrinsic (unique) state                  |
+
+3️. Behavioral Design Patterns
+
+| Pattern                     | Purpose / Definition                      | Real-life / Code Example                | Key Points / When to Use                                   |
+| --------------------------- | ----------------------------------------- | --------------------------------------- | ---------------------------------------------------------- |
+| **Strategy**                | Encapsulate algorithm, switch at runtime  | PaymentService.setStrategy(CardPayment) | Choose behavior dynamically                                |
+| **Observer**                | One-to-many dependency, auto-notify       | NotificationService -> Email/SMS        | Publish-subscribe model                                    |
+| **Chain of Responsibility** | Pass request through chain until handled  | Manager -> Director -> CEO approval     | Sequential handlers, decouples sender/receiver             |
+| **State**                   | Behavior changes based on internal state  | Order: New -> Shipped -> Delivered      | Encapsulate state-specific behavior                        |
+| **Mediator**                | Centralizes communication between objects | ChatRoom mediates ChatUsers             | Reduces coupling, vs Observer: many-to-many vs one-to-many |
+| **Command**                 | Encapsulate request as object             | Remote Control, Undo/Redo               | Supports queueing, undo, decouples invoker/receiver        |
+
+4️. Common Pattern Differences (Interview Questions)
+
+| Comparison               | Key Difference                                                                    | Example / Notes                              |
+| ------------------------ | --------------------------------------------------------------------------------- | -------------------------------------------- |
+| **Singleton vs Factory** | Singleton = 1 instance, Factory = multiple objects                                | Logger vs PaymentFactory                     |
+| **Adapter vs Decorator** | Adapter = interface compatibility, Decorator = add behavior dynamically           | EmailAdapter vs Coffee+Milk                  |
+| **Facade vs Proxy**      | Facade = simplify interface, Proxy = control access                               | OrderFacade vs DocumentProxy                 |
+| **Bridge vs Adapter**    | Bridge = decouples abstraction/implementation, Adapter = convert interface        | Notification + MessageSender vs EmailAdapter |
+| **Strategy vs Command**  | Strategy = choose algorithm dynamically, Command = encapsulate request            | Payment strategies vs Remote Control command |
+| **Observer vs Mediator** | Observer = one-to-many notification, Mediator = central coordinator, many-to-many | NotificationService vs ChatRoom              |
+
+
+
+================CREATIONAL DESIGN PATTERN ==================
+01. Singleton Design pattern
+Ans - Singleton design pattern ensures that a class has only one instance in the application and provides a global access point to that instance. 
+	
+	Instance vs Object 
+	AN object is the actual entity created in memory, while an instance represnts that the object belongs to a particular class 
+	
+		Real life example 	
+			Class -> Student 	
+				Student s1 = new Student();
+				Student s2 = new Student();	
+			Here : 
+					s1 and s2 are objects
+					Both are instances of Student class 
+	
+	Example - 
+
+
+package com.heg.creational;
+
+/**
+ *
+ * @author softwaredeveloper
+ */
+public class Singleton {
+    
+    //static - one shared variable for the entire class
+    //volatile - prevent instrcution reordering and ensures visibility across threads
+    //private -  cannot be accessed directly outside the class
+    private static volatile Singleton instance;
+    
+    //private constructor prevent object creation using new outside the class
+    //ensures only this class can create the object 
+    private Singleton(){
+    if(instance != null){
+        throw  new RuntimeException("Use getIntance method :: ");
+    }
+    }
+    
+    
+    //public method to provide global access to the singleton instance
+    public static Singleton getInstance(){
+        //First check (without locking)
+        //imporves performance because synchronization is avoided 
+        //if instance already created 
+        if(instance == null){
+            
+            //synchronized block ensure only one thread can enter at a time
+            //prevents multiple objects in multithreading 
+            synchronized(Singleton.class){
+                //second check inside synchronized block 
+                //needed beacuse another thread may have created the instance 
+                //while the current thread was waiting for the lock
+                if(instance==null){
+                    //object creation happends only once
+                    instance= new Singleton();
+                }
+            }
+        
+        }
+        
+        //return the single instance of Singleton
+        return instance;
+    
+    }
+    
+    public static void main(String[] args) {
+        
+        Singleton s1 = Singleton.getInstance();
+        Singleton s2 = Singleton.getInstance();
+        System.out.println(s1==s2);
+        
+        
+      
+    }
+    
+}
+
+REAL EXAMPLE : 👉 “In Spring, all beans are Singleton by default and managed by the IoC container, 
+			so most services, repositories, controllers, and components in 
+			real production systems are actually Singleton instances.” 🚀
+
+
+02 - Factory Design pattern
+Ans -  The Factory Design Pattern is a Creational Design pattern used to create object without exposing the object creation to the client.
+Instead of using new directly, a factory method decides which object to create . 
+It helps in loose coupling and clean code design .
+
+	key points  :: 
+	✔ Object creation logic is centralized 
+	✔ Client does not use new Keyword directly
+	
+	public interface Payment {
+    
+    void pay (double  amount);
+    
+}
+
+public class CardPayment  implements Payment{
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paid " + amount + " using Credit Card");
+    }
+    
+}
+
+public class UpiPayment implements Payment{
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paid " +amount + " using UPI" );
+    }
+    
+    
+    
+}
+
+public class NetBankingPayment implements Payment {
+
+    @Override
+    public void pay(double amount){
+        System.out.println("Paid " + amount + " using Net Banking");
+    }
+    
+}
+
+public class PaymentFactory {
+
+    public static Payment getPayment(String type) {
+        if (type.equalsIgnoreCase("UPI")) {
+            return new UpiPayment();
+        } else if (type.equalsIgnoreCase("CARD")) {
+            return new CardPayment();
+        } else if (type.equalsIgnoreCase("NETBANKING")) {
+            return new NetBankingPayment();
+        }
+        throw new IllegalArgumentException("Invalid payment method ");
+    }
+
+}
+
+public class FactoryDemo {
+    public static void main(String[] args) {
+        Payment payment = PaymentFactory.getPayment("CARD");
+        payment.pay(5000);
+    }
+    
+}
+
+Exmaple : - 🌱 Spring / Spring Boot (Industry 🔥)
+BeanFactory 🏭
+ApplicationContext 🧩
+FactoryBean ⚙️
+ObjectFactory 🔁
+RestTemplateBuilder 🌐
+
+03 - Builder Design pattern 
+Ans - The Builder pattern is a Creational Design Pattern used to constrcut complex objects step by step .
+	useful when class have many parameters 
+	
+	public class User {
+    
+    private String name;
+    private int age;
+    private String email;
+    private String phone;
+    private String address;
+    
+    //private constructor so object can only be created through Builder
+    private User(UserBuilder builder){
+        this.name= builder.name;
+        this.age=builder.age;
+        this.email=builder.email;
+        this.phone=builder.phone;
+        this.address=builder.address;
+    }
+    
+    //static Builder class
+    public static class UserBuilder{
+        private String name;
+        private int age;
+        private String email;
+        private String phone;
+        private String address;
+        
+        // constructor for required fields
+        public UserBuilder(String name,int age){
+            this.name=name;
+            this.age=age;
+        }
+        
+        // optional parameter
+        public UserBuilder setEmail(String email){
+            this.email=email;
+            return this;
+        }
+        
+        // optional parameter
+        public UserBuilder setPhone(String phone){
+            this.phone=phone;
+            return this;
+        }
+        
+        // optional parameter
+        public UserBuilder setAddress(String address){
+            this.address=address;
+            return this;
+        }
+        
+         // build method creates final object
+        public User build(){
+            return new User(this);
+        }
+        
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "name=" + name + ", age=" + age + ", email=" + email + ", phone=" + phone + ", address=" + address + '}';
+    }
+    
+    
+    
+}
+
+
+public class BuilderDemo {
+    
+    public static void main(String[] args) {
+        User user = new User.UserBuilder("Pradeep", 30)
+                .setEmail("pradeep@gmail.com")
+                .setPhone("9999999999")
+                .setAddress("Bhopal")
+                .build();
+        
+        System.out.println(user);
+    }
+    
+}
+
+
+04 - =======Prototype========
+Ans - Prototype Pattern is a creational design pattern used to create new objects by cloning an existing object instead of creating a new instance from scratch .
+		
+		When used 
+			- object creation is expensive
+			- Need many similar object 
+			- want to avoid subclass explosion
+	
+	
+/**
+ *
+ * @author softwaredeveloper
+ */
+public class Employee implements Cloneable{
+    private String name;
+    private int id;
+    
+    public Employee(String name,int id){
+        this.name=name;
+        this.id=id;
+    }
+    
+    //clone method 
+    
+    @Override
+    public Employee clone() throws CloneNotSupportedException{
+        return (Employee) super.clone();
+    }
+    
+    public void display (){
+        System.out.println(name + " - " +id);
+    }
+    
+}
+
+   public static void main(String[] args) throws CloneNotSupportedException {
+        
+        Employee emp1 = new Employee("Pradeep", 101);
+        Employee emp2 = emp1.clone();
+        
+        emp1.display();
+        emp2.display();
+        
+        System.out.println(emp1 == emp2);
+        
+        
+    }
+
+	
+
+
+
+ =============STRUCTURAL DESIGN PATTERN ===================	
+ 
+ 01 - Adapter Pattern 
+ Ans  - 
+			-	Its Structural Design pattern
+			-	connect two incompatible interface so they can work together
+
+
+In simple words:
+		Adapter Pattern converts the interface of a class into another interface that the client expects.			
+		
+
+1️ . Problem Statement
+	Suppose system has a notification service that sends notification using common interface 
+	
+	Application expects this method : 
+		sendNotification(String message);
+	
+But external services provide different methods : 
+
+Service 				Method 	
+--------------------------------------
+Email Service 		sendEmail(String msg)
+SMS Service 		sendSms(String msg)		
+Push Service 		sendPush(String msg)
+
+Problem 
+	Your application cannot directly use these services becayse method names are different 
+Example issue : 
+EmailService email = new EmailService();
+email.sendEmail("Hello");	
+
+But your system expects 
+notification.sendNotification("Hello");
+
+Interfaces do not match.
+✔ Solution → Adapter Pattern
+
+
+2. Target Interface (Expected by Client)
+	This is the interface your application understands.
+	
+	public interface NotificationService {
+
+    void sendNotification(String message);
+}
+
+3 . Existing Services (Incompatible Interfaces)
+
+	Email Service
+public class EmailService {
+
+    public void sendEmail(String msg){
+        System.out.println("Email Sent: " + msg);
+    }
+}
+SMS Service
+public class SmsService {
+
+    public void sendSms(String msg){
+        System.out.println("SMS Sent: " + msg);
+    }
+}
+
+
+4. Adapter Implementation
+	Adpater converts expected method -> actual service method
+	
+	public class EmailAdapter implements NotificationService {
+
+    private EmailService emailService;
+
+    public EmailAdapter() {
+        this.emailService = new EmailService();
+    }
+
+    @Override
+    public void sendNotification(String message) {
+        emailService.sendEmail(message);
+    }
+}
+
+
+public class SmsAdapter implements NotificationService {
+
+    private SmsService smsService;
+
+    public SmsAdapter() {
+        this.smsService = new SmsService();
+    }
+
+    @Override
+    public void sendNotification(String message) {
+        smsService.sendSms(message);
+    }
+}
+
+
+5 . Client Code
+
+public class NotificationApp {
+
+    public static void main(String[] args) {
+
+        NotificationService email =
+                new EmailAdapter();
+
+        NotificationService sms =
+                new SmsAdapter();
+
+        email.sendNotification("Welcome User");
+
+        sms.sendNotification("OTP: 1234");
+    }
+}
+
+6 - Output
+Email Sent: Welcome User
+SMS Sent: OTP: 1234
+
+
+7 - Execution Flow
+Client
+   ↓
+NotificationService interface
+   ↓
+Adapter
+   ↓
+Actual Service
+
+
+
+
+
+
+
+
+------------------------------------------------------------
+2 - Decorator 
+Ans - Structural Design pattern used to add new functionality to an object dynamically without modifying its existing code . 
+
+I) Real - Life Example 
+	Think about coffee ordering 
+	
+Base coffee : 
+	simple Coffee 
+Add extra features : 
+	Milk
+	sugar
+	Whipped Cream
+
+Final coffee : 
+		Simple Coffee+Milk+Sugar
+		
+Instead of creating many classes like : 
+	MilkCoffee
+	SugarCoffee
+	MilkSugarCoffee
+	MilkSugarCreamCoffee	
+
+We use Decorator PATTERN
+
+
+II)	Problem Without Decorator 
+Without decorator you may end up with many classes : 
+
+Coffee
+MilkCoffee
+SugarCoffee
+MilkSugarCoffee
+MilkSugarCreamCoffee
+
+This is called class explosion.
+
+Decorator solves this problem.
+
+
+III) Structure of Decorator Pattern 
+	Component Interface
+			↑
+	Concrete Component
+			↑
+		Decorator
+			↑
+	Concrete Decorator
+	
+IV) Example Implementation 
+
+Step 1: Component Interface
+public interface Coffee {
+    String getDescription();
+    double cost();
+}
+
+This is the base contract.	
+
+
+Step 2: Concrete Component
+public class SimpleCoffee implements Coffee {
+
+    public String getDescription() {
+        return "Simple Coffee";
+    }
+
+    public double cost() {
+        return 50;
+    }
+}
+
+Base object.
+
+Step 3: Decorator Abstract Class
+public abstract class CoffeeDecorator implements Coffee {
+
+    protected Coffee coffee;
+
+    public CoffeeDecorator(Coffee coffee) {
+        this.coffee = coffee;
+    }
+}
+
+This class wraps the original object.
+
+Step 4: Concrete Decorators
+Milk Decorator
+public class MilkDecorator extends CoffeeDecorator {
+
+    public MilkDecorator(Coffee coffee) {
+        super(coffee);
+    }
+
+    public String getDescription() {
+        return coffee.getDescription() + " + Milk";
+    }
+
+    public double cost() {
+        return coffee.cost() + 10;
+    }
+}
+Sugar Decorator
+public class SugarDecorator extends CoffeeDecorator {
+
+    public SugarDecorator(Coffee coffee) {
+        super(coffee);
+    }
+
+    public String getDescription() {
+        return coffee.getDescription() + " + Sugar";
+    }
+
+    public double cost() {
+        return coffee.cost() + 5;
+    }
+}
+
+
+
+
+---------------------------------------------------------------------------------
+
+3- Facade Design pattern 
+Ans - Facade Pattern provides a simplified interface to a complex subsystem by hiding the internal implmenetation details from the client.
+	
+		Facade Pattern provides a single simplified interface to a complex subsystem so the client does not need to interact with multiple classes .
+		
+		
+		class Restaurant{
+    
+    public void prepareFood(){
+        System.out.println("Restaurant preparing food .. ");
+    }
+
+}
+
+class PaymentService{
+    
+    public void makePayment(){
+        System.out.println("Payment processed ");
+    }
+
+}
+
+class DeliveryService{
+    
+    public void assignDelivery(){
+        System.out.println("Delivery partner assigned ");
+    }
+
+}
+
+class NotificationService{
+    
+    public void sendNotification(){
+        System.out.println("Order notification sent to user");
+    }
+
+}
+class OrderFacade {
+    private Restaurant restaurant;
+    private PaymentService payment;
+    private DeliveryService delivery;
+    private NotificationService notification;
+    
+    public OrderFacade(){
+        restaurant= new Restaurant();
+        payment= new PaymentService();
+        delivery= new DeliveryService();
+        notification= new NotificationService();
+    }
+    
+    public void placeOrder(){
+        restaurant.prepareFood();
+        payment.makePayment();
+        delivery.assignDelivery();
+        notification.sendNotification();
+        
+    }
+}
+
+public class TestFacade {
+    
+    public static void main(String[] args) {
+        OrderFacade order = new OrderFacade();
+        order.placeOrder();
+    }
+    
+}
+
+
+
+
+
+
+---------------------------------------
+4. Proxy DESIGN PATTERN - 
+Ans - Proxy acts as a middle layer between the client and the real object, controlling how the client accesses it .
+
+Proxy = Substitute object that controls access to the real object
+It can add security, caching, logging, lazy loading, or remote access.
+
+1. Real World Example (Industry level)
+Example : Company Document Access System
+Suppose in a company 
+	- Employees can access documents
+	- Some documents are confidential
+	- Only Managers can access confidential documents 
+	
+Instead of directly accessing the documents service, we use a Proxy to check authorization 
+
+Employee → Proxy → Real Document Service
+
+Proxy checks permission before allowing access.
+
+2. Structure of Proxy PATTERN
+Main components: 
+	1. - Subject (Interface)
+		Common interface for Real Object and Proxy
+	2. Real Subject
+		The actual object that perform the real work.
+	3. Proxy
+		Control access to the real object 
+	
+	Client 
+		|
+	Proxy ----> Real Object
+	
+Example : 
+public interface Document {   
+    void display();    
+}
+
+
+public class RealDocument  implements Document{
+    private String fileName;
+    
+    public RealDocument(String fileName){
+        this.fileName=fileName;
+        loadFromDisk();
+    }
+    
+    private void loadFromDisk(){
+        System.out.println("Loading document from disk : " +fileName);
+    }
+    
+    public void display(){
+        System.out.println("Displaying document : " +fileName);
+    }
+}
+	
+	
+public class DocumentProxy implements Document{
+    private RealDocument realDocument;
+    private String fileName;
+    private String userRole;
+    
+    public DocumentProxy(String fileName,String userRole){
+        this.fileName=fileName;
+        this.userRole=userRole;
+    }
+    
+    
+    public void display(){
+        if(userRole.equals("Manager")){
+            if(realDocument==null){
+                realDocument = new RealDocument(fileName);
+            }
+            realDocument.display();
+            
+        }else{
+            System.out.println("Access Denied : Only managers can view this document.");
+        }
+    }
+    
+}
+
+
+    public static void main(String[] args) {
+        Document doc1 = new DocumentProxy("salary_report.pdf", "Employee");
+        doc1.display();
+        
+        System.out.println();
+        
+         Document doc2 = new DocumentProxy("salary_report.pdf", "Manager");
+        doc2.display();
+    }	
+	
+
+
+---------------------------------------
+5. BRIDGE DESIGN PATTERN
+Ans - Bridge Dsign Pattern is a Structural Design Pattern that separated abstraction from implementation so that both can change independently.
+Instead of creating many subclasses for every combination, Bridge splits the class into two hierarchies 
+
+	-	Abstraction
+	-	Implementation
+This avoids class explosion	
+
+Example : 
+interface MessageSender{
+    void sendMessage(String message);
+}
+
+class EmailSender implements MessageSender{
+
+    @Override
+    public void sendMessage(String message) {
+        System.out.println("Sending Email :: " +message);
+    }
+    
+}
+
+class SMSSender implements MessageSender{
+
+    @Override
+    public void sendMessage(String message) {
+        System.out.println("Sending SMS :: " +message);
+    }
+    
+}
+
+
+class WhatsAppSender implements MessageSender{
+
+    @Override
+    public void sendMessage(String message) {
+        System.out.println("Sending WhatsApp :: " +message);
+    }
+}
+
+abstract class Notification {
+
+    protected MessageSender sender;
+
+    public Notification(MessageSender sender) {
+        this.sender = sender;
+    }
+
+    abstract void notifyUser(String message);
+}
+
+
+class AlterNotification extends Notification{
+
+    public AlterNotification(MessageSender sender) {
+        super(sender);
+    }
+
+    @Override
+    void notifyUser(String message) {
+        sender.sendMessage("ALERT: " +message);
+    }
+    
+}
+
+
+
+
+class PromotionNotification extends Notification{
+
+    public PromotionNotification(MessageSender sender) {
+        super(sender);
+    }
+
+    @Override
+    void notifyUser(String message) {
+        sender.sendMessage("PROMOTION : " +message);
+    }
+
+}
+
+public class BridgePatternDemo {    
+    public static void main(String[] args) {
+        MessageSender email = new EmailSender();
+        Notification notification = new AlterNotification(email);
+        notification.notifyUser("Server Down");
+        
+        MessageSender sms = new SMSSender();
+        Notification promo = new PromotionNotification(sms);
+        promo.notifyUser("50% Dicount Today");
+        
+    }    
+}
+
+
+1. Core 										Difference
+
+Feature		Adapter Pattern																Bridge Pattern
+Purpose		Makes incompatible interfaces work together								Separates abstraction from implementation
+Goal		Integration of existing classes											Design flexibility & scalability
+Used when	Two systems cannot communicate due to interface mismatch				Need to avoid class explosion
+Focus		Converting interface													Decoupling abstraction and implementation
+Stage		Mostly used after system design											Used during system design
+
+
+--------------------------------------
+
+6. Composite Pattern 
+Ans - 
+	used when you need to treat individual objects and groups of objects uniformly.
+	It allows you to build tree-like hierarchical structures where a single object and a collection of objects are handled in the same way.
+	
+interface EmployeeComponent{
+    void showDetails();
+}
+
+//Load (Employee) 
+
+class Employee implements EmployeeComponent{
+    private String name;
+
+    public Employee(String name) {
+        this.name = name;
+    }
+    @Override
+    public void showDetails() {
+        System.out.println("Employee :: " +name);
+    }
+}
+
+class Department implements EmployeeComponent{
+
+    private String name; 
+    private List<EmployeeComponent> members = new ArrayList();
+
+    public Department(String name) {
+        this.name = name;
+    }
+    
+    public void add(EmployeeComponent emp ){
+        members.add(emp);
+    }
+    
+    
+    @Override
+    public void showDetails() {
+        System.out.println("Department : " +name);
+        
+        for(EmployeeComponent e : members){
+            e.showDetails();
+        }
+        
+    }
+    
+}
+
+public class CompositePatternDemo2 {
+    
+    public static void main(String[] args) {
+        Employee e1 = new Employee("Rahul");
+        Employee e2 = new Employee("Amit");
+        
+        Department it = new Department("IT Department");
+        
+        it.add(e1);
+        it.add(e2);
+        
+        Department company = new Department("HEG LTD");
+        company.add(it);
+        
+        company.showDetails();
+    }
+    
+}
+	
+
+
+----------------------------
+07. Flyweight Pattern
+ANs - The Flyweight Pattern is often confusing because its goal is different 
+from most patterns.
+👉 Goal:
+Reduce memory usage by sharing common objects instead of creating many duplicate objects.
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.heg.structural.flyweight;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ *
+ * @author softwaredeveloper
+ */
+
+// Flyweight Class
+// Represents shared (intrinsic) state that can be reused
+// across multiple Employee objects
+
+class Department{
+    // Intrinsic state (shared data)
+    // These fields are common for all employees in the department
+    private String deptId;
+    private String deptName;
+    private String location;
+
+    // Constructor initializes shared department details
+    public Department(String deptId, String deptName, String location) {
+        this.deptId = deptId;
+        this.deptName = deptName;
+        this.location = location;
+    }
+    
+    // Business method that uses extrinsic state (employee data)
+    // Employee-specific details are passed from outside
+    public void showDepartmentDetails(int empId,String empName){
+        System.out.println("Employee ID : " +empId + 
+                            ", Name : " +empName + 
+                            ", Dept :  " +deptName+ 
+                            ", Location : " +location);
+    };
+    
+}
+
+
+
+// Flyweight Factory
+// Factory responsible for creating and managing Flyweight objects
+// Ensures departments are shared instead of duplicated
+class DepartmentFactory{
+    
+     // Cache to store already created department objects
+    // Key = deptId, Value = Department object
+    private static final Map<String,Department> deptCache = new HashMap<>();
+    
+    // Returns shared Department object
+    public static Department getDepartment(String deptId){
+        
+        // Try to get department from cache
+        Department dept = deptCache.get(deptId);
+        
+         // If not found, create new object and cache it
+        if(dept == null){
+            // Simulating database lookup
+            if("IT".equals(deptId)){
+                dept = new Department("IT", "Information Technology", "Bangalore");
+            }else if("HR".equals(deptId)){
+                dept = new Department("HR", "Human Resources", "Delhi");
+            }else {
+                dept = new Department(deptId, "General", "Mumbai");
+            }
+            
+            // Store in cache for future reuse
+            deptCache.put(deptId, dept);
+            System.out.println("Created new Department Object for : " +deptId);
+        }
+        
+         // Return shared object
+        return dept;
+    }
+    
+}
+
+// Context class containing extrinsic (unique) state
+// Each Employee object has its own data
+// but shares Department object
+class Employee{
+    private int empId;
+    private String name;
+    
+    // Reference to shared Flyweight object
+    private Department department; //Shared object
+
+    
+    // Constructor assigns employee data
+    // Department object is obtained from factory (shared)
+    public Employee(int empId, String name, String deptId) {
+        this.empId = empId;
+        this.name = name;
+        
+         // Fetch shared department instance
+        this.department = DepartmentFactory.getDepartment(deptId);
+    }
+    
+    // Display employee details using shared department object
+    public void display(){
+        department.showDepartmentDetails(empId, name);
+    }
+    
+}
+
+// Client class to simulate enterprise usage
+public class FlyweightDemo02 {
+    
+    public static void main(String[] args) {
+        
+        // Multiple employees in same departments
+        // Department objects will be shared
+        
+        
+        Employee e1 = new Employee(101, "Pradeep", "IT");
+        Employee e2 = new Employee(102, "Rahul", "IT");
+        Employee e3 = new Employee(103, "Anita", "HR");
+        Employee e4 = new Employee(104, "Karan", "IT");
+        
+        
+         // Display employee details
+        e1.display();
+        e2.display();
+        e3.display();
+        e4.display();
+        
+        
+    }
+    
+}
+
+
+
+
+
+
+
+====================BEHAVIORAL PATTERN==================================================
+
+11. Strategy Demo 
+Ans - Strategy Pattern = Choose algorithm at runtime
+			OR
+	It encapsulates multiple behaviors and lets the client switch between them without modifying the context class.
+
+Strategy Pattern — Payment System 💳
+👉 Choose algorithm at runtime
+		Used in apps like:
+			Google Pay
+			PhonePe
+			Paytm
+	
+Example : // Strategy Interface
+interface PaymentStrategy {
+    void pay(int amount);
+}
+
+// Concrete Strategies
+class UpiPayment implements PaymentStrategy {
+    public void pay(int amount) {
+        System.out.println("Paid " + amount + " using UPI");
+    }
+}
+
+class CardPayment implements PaymentStrategy {
+    public void pay(int amount) {
+        System.out.println("Paid " + amount + " using Card");
+    }
+}
+
+// Context
+class PaymentService {
+    private PaymentStrategy strategy;
+
+    public void setStrategy(PaymentStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void makePayment(int amount) {
+        strategy.pay(amount);
+    }
+}
+
+// Client
+public class Main {
+    public static void main(String[] args) {
+        PaymentService service = new PaymentService();
+
+        service.setStrategy(new UpiPayment());
+        service.makePayment(500);
+
+        service.setStrategy(new CardPayment());
+        service.makePayment(1200);
+    }
+}
+
+
+
+12. Observer Pattern
+Ans - Observer Pattern = One-to-many dependency where change in one object triggers updates in others automatically.
+	- When one object changes state, all its subscribers are notified automatically.
+
+Used in event systems like:
+		Apache Kafka
+		RabbitMQ	
+
+Example : 
+package com.heg.behavioral.observer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+// Observer Interface 
+interface Observer{
+    void update(String message);
+}
+
+class EmailService implements Observer{
+    @Override
+    public void update(String message) {
+        System.out.println("Email received : " +message);
+    }    
+}
+
+class SmsService implements Observer{
+
+    @Override
+    public void update(String message) {
+        System.out.println("SMS received : " +message);
+    }
+    
+}
+
+class NotificationService{
+    private List<Observer> observers = new ArrayList<>();
+    
+    public void subscribe(Observer o){
+        observers.add(o);
+    }
+    
+    public void notifyAllObservers(String message){
+        for(Observer o : observers){
+            o.update(message);
+        }
+    }
+}
+
+public class ObserverPatternDemo {
+    
+    public static void main(String[] args) {
+        NotificationService service = new NotificationService();
+        service.subscribe(new EmailService());
+        service.subscribe(new SmsService());
+        
+        service.notifyAllObservers("Order Shipped!");
+        
+    }
+    
+}
+
+
+14 . Chain of Responsibility 
+Ans - 🧠 One-Line Killer Definition
+Chain of Responsibility = Multiple handlers get a chance to process a request sequentially until one handles it
+Chain of Responsibility is a behavioral design pattern that passes a request along a chain of handlers, where each handler decides either to process the request or pass it to the next handler in the chain.
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.heg.behavioral.chainOfResponsibility;
+
+/**
+ *
+ * @author softwaredeveloper
+ */
+abstract class Approver{
+    protected Approver next;
+
+    public void setNext(Approver next) {
+        this.next = next;
+    }
+    
+    public abstract void approve(int amount);
+}
+
+
+class Manager extends Approver{
+
+    @Override
+    public void approve(int amount) {
+        if(amount <= 10000)
+            System.out.println("Manager Approved");
+        else if (next !=null)
+            next.approve(amount);
+    }
+}
+
+
+class Director extends Approver{
+
+    @Override
+    public void approve(int amount) {
+        if(amount <=50000)
+            System.out.println("Director approved");
+        else if(next != null)
+            next.approve(amount);
+    }
+    
+}
+
+
+class CEO extends Approver{
+
+    @Override
+    public void approve(int amount) {
+        System.out.println("CEO approved");
+    }
+    
+}
+
+
+public class ChainOfResponsibility {
+    
+    public static void main(String[] args) {
+        Manager m = new Manager();
+        Director d = new Director();
+        CEO c = new CEO();
+        
+        m.setNext(d);
+        d.setNext(c);
+        m.approve(10000);
+    }
+    
+}
+
+
+
+15. State Pattern — Order Status
+Ans - State Pattern = Behavior changes based on current state.
+State Pattern is a behavioral design pattern that allows an object to change its behavior when its internal state changes, as if the object changed its class
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.heg.behavioral.state;
+
+/**
+ *
+ * @author softwaredeveloper
+ */
+
+interface OrderState{
+    void handle();
+}
+
+class NewOrder implements OrderState{
+    @Override
+    public void handle() {
+        System.out.println("Order placed");
+    }
+}
+
+
+class Shipped implements OrderState{
+    @Override
+    public void handle() {
+        System.out.println("Order Shipped");
+    }    
+}
+
+class Delivered implements OrderState{
+    @Override
+    public void handle() {
+        System.out.println("Order delivered");
+    }    
+}
+
+
+class Order{
+    private OrderState state;
+
+    public void setState(OrderState state) {
+        this.state = state;
+    }
+    
+    public void process(){
+        state.handle();
+    }
+    
+    
+}
+
+public class StatePatternDemo {
+    
+    public static void main(String[] args) {
+        Order order = new Order();
+        
+        order.setState(new NewOrder());
+        order.process();
+        
+        order.setState(new Shipped());
+        order.process();
+
+        order.setState(new Delivered());
+        order.process();
+        
+    }
+    
+}
+
+
+-----------------------------
+16. Mediator Design pattern
+Ans - Mediator centralize communication between objects to reduce direct dependencies and simplify collaboration
+
+ - Mediator Interface - communication contract
+ - Concreate Mediator - center coordinator
+ - Colleague classes - components that interact via mediator
+ 
+ 
+ package com.heg.behavioral.mediator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author softwaredeveloper
+ */
+//Mediator Interface
+interface ChatMediator {
+
+    void addUser(User user);
+
+    void sendMessage(String msg, User user);
+}
+
+class ChatRoom implements ChatMediator {
+    
+    private List<User> users = new ArrayList<>();
+
+    // Register user to chat room
+    public void addUser(User user) {
+        users.add(user);
+    }
+
+    // Send message to all users except sender
+    public void sendMessage(String msg, User sender) {
+        for (User u : users) {
+            if (u != sender) {
+                u.receive(msg);
+            }
+        }
+    }
+    
+}
+
+abstract class User {
+    
+    protected ChatMediator mediator;
+    protected String name;
+    
+    public User(ChatMediator mediator, String name) {
+        this.mediator = mediator;
+        this.name = name;
+    }
+    
+    public abstract void send(String msg);
+
+    public abstract void receive(String msg);
+}
+
+class ChatUser extends User {
+    
+    public ChatUser(ChatMediator mediator, String name) {
+        super(mediator, name);
+    }
+    
+    @Override
+    public void send(String msg) {
+        System.out.println(name + " sends : " + msg);
+        mediator.sendMessage(msg, this);
+    }
+    
+    @Override
+    public void receive(String msg) {
+        System.out.println(name + " receives : " + msg);
+    }
+    
+}
+
+public class MediatorPatternDemo {
+    
+    public static void main(String[] args) {
+        ChatMediator chatRoom = new ChatRoom();
+        
+        User u1 = new ChatUser(chatRoom, "Pradeep");
+        User u2 = new ChatUser(chatRoom, "Rahul");
+        User u3 = new ChatUser(chatRoom, "Anita");
+        
+        chatRoom.addUser(u1);
+        chatRoom.addUser(u2);
+        chatRoom.addUser(u3);
+        
+        u1.send("Hello everyone!");
+    }
+    
+}
+
+
+
+ 
+ 
+ 
+ 🆚 Mediator vs Observer
+Mediator						Observer
+Central controller			Publish-subscribe
+Many-to-many coordination	One-to-many notification
+Complex interactions		Event updates
+
+
+17. Command Design Pattern
+Ans - The command Pattern truns a request into a standalone object that contains all information needed to perform an action 
+🌍 Real-World Examples
+📺 Remote Control
+
+Pressing a button triggers a command:
+
+Power ON
+
+Volume Up
+
+Channel Change
+
+Remote doesn’t know TV internals.
+
+🖥️ Desktop Applications (Undo/Redo)
+
+Apps like:
+
+Microsoft Word
+
+Adobe Photoshop
+
+Visual Studio Code
+
+Each user action is stored as a command → enables Undo ⏪
+
+🛒 Enterprise Systems
+
+Job queues
+
+Task schedulers
+
+Transaction processing
+
+Event sourcing
+
+Microservices commands
+
+🏗 Structure
+
+1️⃣ Command Interface — defines execute()
+2️⃣ Concrete Command — implements action
+3️⃣ Receiver — performs actual work
+4️⃣ Invoker — triggers command
+5️⃣ Client — creates command
+
+
+🔥 Command vs Strategy (Common Interview Trap)
+Command						Strategy
+Encapsulates request		Encapsulates algorithm
+Invoker triggers action		Context selects behavior
+Supports undo/queue			Focus on interchangeable logic
+
+
+
+
+
+
+
+
